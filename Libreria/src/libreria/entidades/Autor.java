@@ -49,5 +49,10 @@ public class Autor{
     public void setAlta(boolean alta) {
         this.alta = alta;
     }
+
+    @Override
+    public String toString() {
+        return "Autor{" + "id=" + id + ", nombre=" + nombre + ", alta=" + alta + '}';
+    }
     
 }

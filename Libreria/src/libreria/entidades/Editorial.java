@@ -49,6 +49,11 @@ public class Editorial {
     public void setAlta(boolean alta) {
         this.alta = alta;
     }
+
+    @Override
+    public String toString() {
+        return "Editorial{" + "id=" + id + ", nombre=" + nombre + ", alta=" + alta + '}';
+    }
     
     
 }

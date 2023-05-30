@@ -1,60 +1,69 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package libreria.persistencia;
 
+import java.util.List;
+import javax.persistence.Query;
 import libreria.entidades.Libro;
 
-/**
- *
- * @author Usuario
- */
 public class LibroDAO extends DAO<Libro>{
     
     @Override
     public void guardar(Libro libro){
         super.guardar(libro);
     }
-    
-    public Libro buscarLibroPorTitulo(String nombre){
-        conectar();
-        Libro libro = em.find(Libro.class, nombre);
-        desconectar();
-        return libro;
-    }
-    
-    public Libro buscarLibroPorId(int id){
-        conectar();
+       public Libro buscarLibroPorCodigo(int id){
         Libro libro = em.find(Libro.class, id);
+        return libro;
+    }
+    
+    
+    public Libro buscarLibroPorNombre(String nombre){
+        conectar();
+        Query query = em.createQuery("SELECT l FROM Libro l WHERE l.nombre = :nombre");
+        query.setParameter("nombre", nombre);
+        Libro libro = (Libro) query.getSingleResult();
         desconectar();
         return libro;
     }
     
-    public void eliminiarLibroPorId(int id){
-        Libro libro = buscarLibroPorId(id);
-        super.eliminar(libro);
+    
+    public void bajaLibroPorCodigo(int id){
+        Libro libro = em.find(Libro.class, id);
+        libro.setAlta(false);
+        super.editar(libro);
+        System.out.println("El libro "+libro.toString()+" fue dado de baja");
     }
     
-    public void eliminarLibroPorNombre(String nombre){
-        Libro libro = buscarLibroPorTitulo(nombre);
-        super.eliminar(libro);
-    }
-    
-    public void actualizarLibroTituloPorId(int id, String titulo){
+    public void bajaLibroPorNombre(String nombre){
         conectar();
-        Libro libro = buscarLibroPorId(id);
-        libro.setTitulo(titulo);
+        Query query = em.createQuery("SELECT l FROM Libro l WHERE l.nombre = :nombre");
+        query.setParameter("nombre", nombre);
+        Libro libro = (Libro) query.getSingleResult();
+        libro.setAlta(false);
         super.editar(libro);
         desconectar();
-
+        System.out.println("El libro "+libro.toString()+" fue dado de baja");
     }
+
     
-    public void actualizarLibroTituloPorNobre(String titulo, String nuevoTitulo){
-        conectar();
-        Libro libro = buscarLibroPorTitulo(titulo);
+    public void actualizarLibroTituloPorCodigo(int id, String nuevoTitulo){
+        Libro libro = buscarLibroPorCodigo(id);
         libro.setTitulo(nuevoTitulo);
         super.editar(libro);
-        desconectar();
     }
+    
+    public void actualizarLibroTituloPorNombre(String titulo, String nuevoTitulo){
+        Libro libro = buscarLibroPorNombre(titulo);
+        libro.setTitulo(nuevoTitulo);
+        super.editar(libro);
+    }
+      
+    public List<Libro> listarTodos() throws Exception {
+        conectar();
+        List<Libro> libros = em.createQuery("SELECT l FROM Libro l")
+                .getResultList();
+        desconectar();
+        return libros;
+    }
+
 }
